@@ -1,10 +1,11 @@
 [[source]]
-url = "https://pypi.org/simple"
+url = "https://pypi.org/simple/"
 verify_ssl = true
 name = "pypi"
 
 [packages]
 langchain = "==0.0.352"
+langchain-community = "==0.0.19"
 langchain-openai = "==0.0.5"
 python-dotenv = "==1.0.0"
 
