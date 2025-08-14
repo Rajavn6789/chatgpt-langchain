@@ -1,13 +1,13 @@
 from dotenv import load_dotenv
-load_dotenv()  # loads OPENAI_API_KEY from .env
+load_dotenv(override=True)  
 
-# LangChain imports (Windows-safe)
+
 from langchain_community.document_loaders.text import TextLoader
 from langchain.text_splitter import CharacterTextSplitter  # or RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
+from langchain.vectorstores.chroma import Chroma
 
 embeddings = OpenAIEmbeddings()
-
 
 text_splitter = CharacterTextSplitter(
     separator="\n",
@@ -15,11 +15,21 @@ text_splitter = CharacterTextSplitter(
     chunk_overlap=0
 )
 
-loader = TextLoader("facts_min.txt", encoding="utf-8")  # add encoding on Windows
+loader = TextLoader("facts_min.txt", encoding="utf-8") 
 
 
 docs = loader.load_and_split(text_splitter=text_splitter)
 
-for doc in docs:
-    print(doc.page_content)
+db = Chroma.from_documents(
+    docs,
+    embedding=embeddings,
+    persist_directory="emb"
+)
+
+results = db.similarity_search(
+    "What is an interesting fact about the English language?"
+)
+
+for result in results:
     print("\n")
+    print(result.page_content)
